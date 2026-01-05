@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NIW Evidence Mapping · Expanded</title>
+  <style>
+    :root{
+      --bg:#0b1020; --bg2:#0e1630;
+      --card:rgba(255,255,255,.06); --border:rgba(255,255,255,.12);
+      --text:rgba(255,255,255,.92); --muted:rgba(255,255,255,.68);
+      --accent:#7aa6ff; --gold:#f2c66d; --ok:#7affc3; --danger:#ff7a7a;
+      --radius:18px; --radius2:26px; --max:1100px;
+      --shadow:0 18px 60px rgba(0,0,0,.40);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Apple SD Gothic Neo, Noto Sans KR, Arial;
+      background:
+        radial-gradient(900px 500px at 15% 10%, rgba(122,166,255,.22), transparent 60%),
+        radial-gradient(900px 500px at 85% 20%, rgba(242,198,109,.18), transparent 60%),
+        radial-gradient(900px 650px at 50% 90%, rgba(122,255,195,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      color:var(--text);
+      line-height:1.55;
+    }
+    .wrap{max-width:var(--max); margin:0 auto; padding:0 20px;}
+    .nav{
+      position:sticky; top:0; z-index:30;
+      backdrop-filter: blur(14px);
+      background: rgba(10,16,32,.55);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner{display:flex; justify-content:space-between; align-items:center; padding:14px 0; gap:12px;}
+    .brand{display:flex; align-items:center; gap:10px; font-weight:800;}
+    .logo{width:34px; height:34px; border-radius:10px; background: linear-gradient(135deg, rgba(122,166,255,.95), rgba(242,198,109,.95)); box-shadow:0 10px 25px rgba(0,0,0,.35)}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding:10px 14px; border-radius:999px;
+      border:1px solid var(--border); background:rgba(255,255,255,.05);
+      color:var(--text); text-decoration:none; font-weight:750;
+      cursor:pointer; transition:transform .12s ease, background .12s ease, border-color .12s ease;
+    }
+    .btn:hover{transform:translateY(-1px); background:rgba(255,255,255,.07); border-color:rgba(255,255,255,.20)}
+    .btn.primary{border-color:rgba(122,166,255,.55); background: linear-gradient(135deg, rgba(122,166,255,.25), rgba(242,198,109,.15));}
+    .btn.ghost{background:transparent}
+    .pill{display:inline-flex; gap:8px; padding:7px 11px; border-radius:999px; background:rgba(255,255,255,.06); border:1px solid var(--border); color:var(--muted); font-weight:700; font-size:13px}
+    .card{border:1px solid var(--border); background:var(--card); border-radius:var(--radius2); box-shadow:var(--shadow);}
+    header{padding:28px 0 10px}
+    h1{margin:10px 0 8px; font-size: clamp(26px, 3.4vw, 40px); line-height:1.12; letter-spacing:-.6px}
+    p.lead{margin:0; color:var(--muted); max-width:75ch}
+    .grid{display:grid; grid-template-columns: 1.1fr .9fr; gap:14px; align-items:stretch; margin-top:16px;}
+    @media (max-width: 900px){ .grid{grid-template-columns:1fr;} }
+    .panel{padding:22px}
+    .steps{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+    .stepdot{
+      padding:7px 10px; border-radius:999px;
+      border:1px solid var(--border); background:rgba(255,255,255,.05);
+      color:var(--muted); font-weight:750; font-size:12px;
+    }
+    .stepdot.active{border-color: rgba(122,166,255,.55); color: rgba(255,255,255,.88); background: rgba(122,166,255,.12);}
+    .stepdot.done{border-color: rgba(122,255,195,.45); color: rgba(255,255,255,.88); background: rgba(122,255,195,.10);}
+    section{padding: 12px 0 28px}
+    .box{padding:18px; border-radius: var(--radius); border:1px solid var(--border); background: rgba(0,0,0,.18);}
+    .qtitle{margin:0 0 8px; font-size:16px; letter-spacing:-.2px}
+    .muted{color:var(--muted)}
+    .row{display:grid; grid-template-columns: 1fr 1fr; gap:10px;}
+    @media (max-width: 720px){ .row{grid-template-columns:1fr;} }
+    label{display:block; font-size:12px; font-weight:800; color:rgba(255,255,255,.76); margin:10px 0 6px}
+    input[type="text"], input[type="email"], textarea, select{
+      width:100%;
+      padding:11px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      outline:none;
+    }
+    textarea{min-height:92px; resize:vertical}
+    .choice{
+      display:flex; align-items:flex-start; gap:10px;
+      padding:10px 12px; border-radius:14px;
+      border:1px solid var(--border); background:rgba(255,255,255,.05);
+      cursor:pointer; transition:transform .12s ease, background .12s ease;
+      margin-top:8px;
+    }
+    .choice:hover{transform:translateY(-1px); background:rgba(255,255,255,.07)}
+    input[type="radio"], input[type="checkbox"]{margin-top:2px; accent-color:var(--accent)}
+    .hint{
+      margin-top:10px; font-size:13px; color:var(--muted);
+      border-left: 3px solid rgba(242,198,109,.45);
+      padding-left: 10px;
+    }
+    .bar{
+      height:10px; border-radius:999px; background:rgba(255,255,255,.08);
+      overflow:hidden; border:1px solid rgba(255,255,255,.10);
+    }
+    .bar > div{height:100%; width:0%; background: linear-gradient(90deg, rgba(122,166,255,.9), rgba(242,198,109,.85)); transition: width .18s ease;}
+    .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; justify-content:space-between; align-items:center;}
+    .actions .left{display:flex; gap:10px; flex-wrap:wrap;}
+    .mini{
+      padding:14px; border-radius:16px; border:1px solid var(--border); background:rgba(255,255,255,.05);
+    }
+    .mini strong{display:block; margin-bottom:6px}
+    .tag{display:inline-flex; gap:8px; padding:6px 10px; border-radius:999px; border:1px solid var(--border); background:rgba(255,255,255,.05); color:var(--muted); font-weight:750; font-size:12px; margin-right:8px; margin-top:8px}
+    .warn{border-color: rgba(255,122,122,.35); background: rgba(255,122,122,.06);}
+    .ok{border-color: rgba(122,255,195,.30); background: rgba(122,255,195,.06);}
+    .result{
+      padding:18px; border-radius: var(--radius2);
+      border:1px solid rgba(122,166,255,.35);
+      background: linear-gradient(180deg, rgba(122,166,255,.10), rgba(255,255,255,.03));
+    }
+    .result h3{margin:0 0 10px}
+    .copybox{
+      margin-top:12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.20);
+      padding: 12px;
+      color: rgba(255,255,255,.90);
+      font-size: 13px;
+      white-space: pre-wrap;
+    }
+    .foot{padding:24px 0 40px; color:rgba(255,255,255,.60); font-size:12px; border-top:1px solid rgba(255,255,255,.10); margin-top:24px;}
+    .hidden{display:none}
+  </style>
+</head>
+
+<body>
+  <div class="nav">
+    <div class="wrap">
+      <div class="nav-inner">
+        <div class="brand">
+          <div class="logo" aria-hidden="true"></div>
+          <div>
+            NIW Evidence Mapping
+            <div class="muted" style="font-weight:750; font-size:12px; margin-top:2px;">Expanded · Multi-step</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+          <a class="btn ghost" href="#tool">도구</a>
+          <button class="btn gold" id="btnReset" type="button">초기화</button>
+          <button class="btn primary" id="btnJumpStart" type="button">시작 / 이어서</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <div class="wrap">
+      <div class="card panel">
+        <span class="pill">증거 기반 · 점수는 숨김 · 요약 리포트 자동 생성</span>
+        <h1>고객이 “점수표”가 아니라<br/>전문가의 사고 구조를 체험하게 만드십시오.</h1>
+        <p class="lead">
+          이 확장판은 <strong>멀티스텝 질문</strong>으로 진행되며,
+          각 단계는 “판단”이 아니라 <strong>증거 매핑</strong>을 요구합니다.
+          마지막에는 <strong>상담용 요약 리포트</strong>가 자동 생성됩니다.
+        </p>
+
+        <div style="margin-top:14px">
+          <div class="muted" style="font-weight:800; margin-bottom:8px;">진행도</div>
+          <div class="bar" aria-label="progress bar"><div id="progressFill"></div></div>
+          <div class="steps" id="stepDots" aria-label="step dots"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section id="tool">
+    <div class="wrap">
+      <div class="grid">
+        <!-- LEFT: Wizard -->
+        <div class="card panel">
+          <div id="wizard"></div>
+
+          <div class="actions">
+            <div class="left">
+              <button class="btn" id="btnPrev" type="button">← 이전</button>
+              <button class="btn primary" id="btnNext" type="button">다음 →</button>
+            </div>
+            <div class="muted" id="saveHint" style="font-size:12px;">
+              입력은 브라우저에 임시 저장됩니다(로컬). 전송은 아직 연결되지 않았습니다.
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Live guidance -->
+        <div class="card panel">
+          <div class="mini">
+            <strong>이 도구가 하는 일</strong>
+            <div class="muted">
+              합격을 예측하지 않습니다. 대신 <strong>현재 자료가 NIW 논리 흐름에 정렬되어 있는지</strong>를 보여줍니다.
+            </div>
+          </div>
+
+          <div class="mini" style="margin-top:12px">
+            <strong>점수 공개를 미루는 이유</strong>
+            <div class="muted">
+              점수는 “판정”처럼 느껴져 신뢰를 해칩니다. 우리는 점수보다 <strong>병목(논리 끊김)</strong>과 <strong>증거 보강 방향</strong>을 먼저 보여줍니다.
+            </div>
+          </div>
+
+          <div class="mini warn" style="margin-top:12px" id="bottleneckBox">
+            <strong>현재까지 감지된 병목</strong>
+            <div class="muted" id="bottleneckText" style="margin-top:6px">
+              아직 데이터가 충분하지 않습니다. 질문을 진행해 주세요.
+            </div>
+          </div>
+
+          <div class="mini ok" style="margin-top:12px">
+            <strong>상담 효율</strong>
+            <div class="muted">
+              완료 후 생성되는 <strong>요약 리포트</strong>를 그대로 이메일/CRM로 보내면,
+              상담은 “가능성”이 아니라 “구조 설계”부터 바로 시작됩니다.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESULT -->
+      <div class="card panel hidden" id="resultSection" style="margin-top:14px">
+        <div class="result">
+          <h3>요약 리포트 (복사하여 전송 가능)</h3>
+          <p class="muted">
+            이 결과는 합격/불합격이 아닙니다. 현재 자료의 정렬 상태와 병목 지점을 요약합니다.
+          </p>
+
+          <div class="row" style="margin-top:12px">
+            <button class="btn primary" id="btnCopy" type="button">📋 리포트 복사</button>
+            <button class="btn" id="btnPrint" type="button">🖨️ 인쇄/PDF 저장</button>
+          </div>
+
+          <div class="copybox" id="reportBox" aria-label="report box"></div>
+
+          <div style="margin-top:14px" class="muted">
+            * 실제 운영 시: Formspree 또는 Cloudflare Worker 엔드포인트로 이 리포트를 전송하도록 연결하면 됩니다.
+          </div>
+        </div>
+
+        <div class="foot">
+          <strong>Disclaimer:</strong> 본 도구는 일반 정보 제공 목적이며 법률 자문이 아닙니다. 구체 사안은 상담을 통해 검토가 필요합니다.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    /**
+     * Expanded NIW Evidence Mapping (single-file)
+     * - Multi-step wizard
+     * - Evidence-linked inputs
+     * - Hidden scoring
+     * - Bottleneck detection
+     * - Summary report generation
+     *
+     * NOTE: This demo stores in localStorage only.
+     * You can connect to Formspree/Worker by POSTing `buildReport()` output.
+     */
+
+    const STORAGE_KEY = "niw_evidence_mapping_v1";
+    const $ = (sel) => document.querySelector(sel);
+
+    const steps = [
+      {
+        id: "profile",
+        title: "1) 기본 정보",
+        subtitle: "상담 리포트에 포함될 최소 정보를 입력합니다.",
+        fields: [
+          { type:"text", key:"name", label:"성함", placeholder:"예: 홍길동" },
+          { type:"email", key:"email", label:"이메일", placeholder:"예: name@example.com" },
+          { type:"text", key:"field", label:"분야 / Proposed Endeavor(한 문장)", placeholder:"예: AI alignment 기반 agent architecture 연구" },
+        ],
+        score: (s) => {
+          let pts = 0;
+          if (s.name?.trim()) pts++;
+          if (s.email?.trim()) pts++;
+          if (s.field?.trim()) pts++;
+          return {pts, max:3, bottlenecks: pts<2 ? ["기본 정보가 부족합니다(연락/요약 리포트 생성에 필요)."] : []};
+        }
+      },
+      {
+        id: "endeavor",
+        title: "2) Endeavor 연속성",
+        subtitle: "‘계획’이 아닌, 이미 해오던 전문 활동의 연장인지 확인합니다.",
+        radios: {
+          key: "endeavor_clarity",
+          label: "당신의 ‘전문 축’을 한 문장으로 말할 수 있습니까?",
+          options: [
+            { value:"0", text:"아직 정리되지 않았습니다" },
+            { value:"1", text:"여러 축이 있고 하나로 좁히는 중입니다" },
+            { value:"2", text:"명확한 하나의 축이 있습니다" }
+          ]
+        },
+        evidenceChecks: {
+          key: "endeavor_evidence",
+          label: "연속성을 증명할 수 있는 자료(제출 가능한 형태)를 골라주세요.",
+          options: [
+            "프로젝트/연구 산출물(보고서/논문/특허/제품)",
+            "반복 수행을 보여주는 타임라인(연도별 프로젝트/역할)",
+            "내 역할이 ‘핵심 주도’였음을 보여주는 문서(리더/PI/Owner 등)",
+          ]
+        },
+        evidenceText: { key:"endeavor_links", label:"증거 링크/설명(선택)", placeholder:"예: Google Scholar 링크, 프로젝트 페이지, 깃허브, 보고서 PDF 등" },
+        hint: "이 단계에서 ‘명확한 축’ + ‘반복 수행 증거’가 없으면, NIW 논리는 출발점에서 흔들립니다.",
+        score: (s) => {
+          const r = parseInt(s.endeavor_clarity ?? "0", 10);
+          const checks = (s.endeavor_evidence || []).length;
+          let pts = 0;
+          pts += r;                 // 0~2
+          pts += Math.min(2, checks); // 0~2
+          const max = 4;
+          const b = [];
+          if (r === 0) b.push("Endeavor(전문 축)이 아직 정리되지 않았습니다.");
+          if (checks < 2) b.push("연속성을 뒷받침하는 제출 가능한 증거가 부족합니다(최소 2개 권장).");
+          return {pts, max, bottlenecks: b};
+        }
+      },
+      {
+        id: "importance",
+        title: "3) National Importance(맥락 연결)",
+        subtitle: "‘중요하다’는 의견이 아니라 자료로 연결되어야 합니다.",
+        radios: {
+          key: "importance_level",
+          label: "당신의 활동이 미치는 범위를 가장 가깝게 고르세요.",
+          options: [
+            { value:"0", text:"개인/팀 수준" },
+            { value:"1", text:"회사/기관 수준" },
+            { value:"2", text:"산업/분야 수준" },
+            { value:"3", text:"국가/정책/공공 수준" }
+          ]
+        },
+        evidenceChecks: {
+          key: "importance_evidence",
+          label: "미국 내 중요성을 ‘자료’로 설명할 수 있습니까?",
+          options: [
+            "시장/산업 보고서(리포트/통계)로 수요를 설명 가능",
+            "연방/주 정책·공공 문서로 맥락 연결 가능",
+            "미국 내 적용/도입 사례(기관·프로젝트)와 연결 가능",
+          ]
+        },
+        evidenceText: { key:"importance_links", label:"자료 링크/메모(선택)", placeholder:"예: DOE/NSF 관련 문서, 산업 리포트, 미국 프로젝트 링크 등" },
+        hint: "National Importance는 ‘내가 중요하다’가 아니라 ‘미국이 왜 이것을 중요하게 보는가’의 언어로 써야 합니다.",
+        score: (s) => {
+          const r = parseInt(s.importance_level ?? "0", 10); // 0~3
+          const checks = (s.importance_evidence || []).length; // 0~3
+          let pts = 0;
+          pts += Math.min(3, r);
+          pts += Math.min(3, checks);
+          const max = 6;
+          const b = [];
+          if (r <= 1) b.push("영향 범위가 ‘산업/정책’ 수준으로 정리되지 않았습니다(중요성 논리 약화).");
+          if (checks < 2) b.push("중요성을 뒷받침할 자료(정책/시장/사례)가 부족합니다.");
+          return {pts, max, bottlenecks: b};
+        }
+      },
+      {
+        id: "positioned",
+        title: "4) Well Positioned(수행 능력)",
+        subtitle: "실적의 ‘양’이 아니라, Endeavor와의 ‘직결성’과 ‘핵심 주도성’입니다.",
+        radios: {
+          key: "track_record",
+          label: "Endeavor와 직접 연결되는 과거 실적(대표 산출물)이 있습니까?",
+          options: [
+            { value:"0", text:"없거나 연결이 약합니다" },
+            { value:"1", text:"일부 연결되는 실적이 있습니다" },
+            { value:"2", text:"다수의 실적이 직접 연결됩니다" },
+            { value:"3", text:"핵심 주도 실적이 명확합니다" }
+          ]
+        },
+        evidenceChecks: {
+          key: "positioned_evidence",
+          label: "수행 능력을 객관화할 증거를 선택하세요.",
+          options: [
+            "독립적 평가(인용/심사/초청/외부 수상 등)",
+            "리더십 증빙(PI/리드/오너/총괄 역할 문서)",
+            "외부 추천인(이해관계 적은 독립 추천인) 확보 가능",
+          ]
+        },
+        evidenceText: { key:"positioned_links", label:"대표 산출물 링크/메모(선택)", placeholder:"예: 논문 링크, 제품/특허, 프로젝트 결과 보고서 등" },
+        hint: "추천서만으로는 상한이 있습니다. ‘독립 자료 + 실물 증거’가 있어야 3점 영역으로 올라갑니다.",
+        score: (s) => {
+          const r = parseInt(s.track_record ?? "0", 10); // 0~3
+          const checks = (s.positioned_evidence || []).length; // 0~3
+          let pts = 0;
+          pts += Math.min(3, r);
+          pts += Math.min(3, checks);
+          const max = 6;
+          const b = [];
+          if (r <= 1) b.push("Endeavor와 직접 연결되는 핵심 실적이 약합니다(정렬 재구성 필요).");
+          if (checks < 2) b.push("수행 능력을 객관화할 독립 자료/리더십 증거가 부족합니다.");
+          return {pts, max, bottlenecks: b};
+        }
+      },
+      {
+        id: "balancing",
+        title: "5) Balancing Test(면제 정당성)",
+        subtitle: "PERM이 왜 비효율적인지 ‘구조적으로’ 설명할 수 있어야 합니다.",
+        radios: {
+          key: "perm_fit",
+          label: "PERM 고용 절차가 부적절한 이유를 설명할 수 있습니까?",
+          options: [
+            { value:"0", text:"설명하기 어렵습니다" },
+            { value:"1", text:"의견 수준으로는 말할 수 있습니다" },
+            { value:"2", text:"논리적으로 설명 가능합니다" },
+            { value:"3", text:"구조적으로(정책/시장/직무 특성) 설명 가능합니다" }
+          ]
+        },
+        evidenceChecks: {
+          key: "balancing_evidence",
+          label: "면제 정당성을 뒷받침할 자료가 있습니까?",
+          options: [
+            "특수성/희소성(대체 어려움)을 보여주는 근거",
+            "즉시성(지금 필요한 이유) 근거: 계약/초청/협업 등",
+            "미국 내 파급효과를 설명할 자료(공공성/확산성)",
+          ]
+        },
+        evidenceText: { key:"balancing_links", label:"근거/메모(선택)", placeholder:"예: LOI, 협업 이메일, 연구계획과 과거 실적 연결 요약 등" },
+        hint: "Balancing은 마지막에 붙이는 문장이 아니라, 전체 논리의 ‘정당화’입니다.",
+        score: (s) => {
+          const r = parseInt(s.perm_fit ?? "0", 10); // 0~3
+          const checks = (s.balancing_evidence || []).length; // 0~3
+          let pts = 0;
+          pts += Math.min(3, r);
+          pts += Math.min(3, checks);
+          const max = 6;
+          const b = [];
+          if (r <= 1) b.push("PERM 면제 정당성 논리가 ‘의견’ 수준에 머물 가능성이 큽니다.");
+          if (checks < 2) b.push("면제 정당성을 뒷받침할 ‘즉시성/희소성/파급’ 자료가 부족합니다.");
+          return {pts, max, bottlenecks: b};
+        }
+      },
+      {
+        id: "final",
+        title: "6) 결과 생성",
+        subtitle: "점수 대신 ‘병목’과 ‘보강 방향’을 보여드립니다.",
+        final: true,
+        score: (s) => ({pts:0, max:0, bottlenecks:[]})
+      }
+    ];
+
+    let state = loadState();
+    let stepIndex = state._stepIndex ?? 0;
+
+    const stepDots = $("#stepDots");
+    const wizard = $("#wizard");
+    const progressFill = $("#progressFill");
+
+    function loadState(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return {};
+        return JSON.parse(raw);
+      }catch(e){
+        return {};
+      }
+    }
+    function saveState(){
+      state._stepIndex = stepIndex;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function setProgress(){
+      const pct = Math.round((stepIndex / (steps.length-1)) * 100);
+      progressFill.style.width = pct + "%";
+      stepDots.innerHTML = "";
+      steps.forEach((st, i) => {
+        const d = document.createElement("div");
+        d.className = "stepdot";
+        d.textContent = st.title;
+        if(i === stepIndex) d.classList.add("active");
+        if(i < stepIndex) d.classList.add("done");
+        d.addEventListener("click", () => {
+          stepIndex = i;
+          render();
+        });
+        stepDots.appendChild(d);
+      });
+    }
+
+    function render(){
+      setProgress();
+      const st = steps[stepIndex];
+      $("#resultSection").classList.add("hidden");
+
+      wizard.innerHTML = `
+        <div class="box">
+          <div class="muted" style="font-weight:800; letter-spacing:.2px; margin-bottom:6px;">${st.title}</div>
+          <div class="qtitle">${st.subtitle || ""}</div>
+          ${st.hint ? `<div class="hint">${st.hint}</div>` : ""}
+          <div id="content"></div>
+        </div>
+      `;
+
+      const content = wizard.querySelector("#content");
+
+      // Build content
+      if(st.fields){
+        const rows = [];
+        for(const f of st.fields){
+          rows.push(`
+            <div>
+              <label for="${f.key}">${f.label}</label>
+              <input id="${f.key}" type="${f.type}" value="${escapeHtml(state[f.key] || "")}" placeholder="${escapeHtml(f.placeholder || "")}" />
+            </div>
+          `);
+        }
+        content.innerHTML = `<div class="row">${rows.join("")}</div>`;
+        st.fields.forEach(f => {
+          const el = $("#" + f.key);
+          el.addEventListener("input", () => {
+            state[f.key] = el.value;
+            saveState();
+            updateBottlenecks();
+          });
+        });
+      }
+
+      if(st.radios){
+        const rKey = st.radios.key;
+        const cur = state[rKey] ?? "";
+        const opts = st.radios.options.map(o => `
+          <label class="choice">
+            <input type="radio" name="${rKey}" value="${o.value}" ${String(cur)===String(o.value) ? "checked":""} />
+            ${escapeHtml(o.text)}
+          </label>
+        `).join("");
+        const block = document.createElement("div");
+        block.innerHTML = `
+          <label style="margin-top:14px">${escapeHtml(st.radios.label)}</label>
+          <div>${opts}</div>
+        `;
+        content.appendChild(block);
+
+        block.querySelectorAll(`input[name="${rKey}"]`).forEach(inp => {
+          inp.addEventListener("change", () => {
+            state[rKey] = inp.value;
+            saveState();
+            updateBottlenecks();
+          });
+        });
+      }
+
+      if(st.evidenceChecks){
+        const cKey = st.evidenceChecks.key;
+        const curArr = Array.isArray(state[cKey]) ? state[cKey] : [];
+        const opts = st.evidenceChecks.options.map((txt, idx) => {
+          const checked = curArr.includes(txt);
+          return `
+            <label class="choice">
+              <input type="checkbox" data-ckey="${cKey}" value="${escapeHtml(txt)}" ${checked ? "checked":""} />
+              ${escapeHtml(txt)}
+            </label>
+          `;
+        }).join("");
+        const block = document.createElement("div");
+        block.innerHTML = `
+          <label style="margin-top:14px">${escapeHtml(st.evidenceChecks.label)}</label>
+          <div>${opts}</div>
+        `;
+        content.appendChild(block);
+
+        block.querySelectorAll(`input[type="checkbox"][data-ckey="${cKey}"]`).forEach(inp => {
+          inp.addEventListener("change", () => {
+            const val = inp.value;
+            let arr = Array.isArray(state[cKey]) ? state[cKey] : [];
+            if(inp.checked){
+              if(!arr.includes(val)) arr.push(val);
+            }else{
+              arr = arr.filter(x => x !== val);
+            }
+            state[cKey] = arr;
+            saveState();
+            updateBottlenecks();
+          });
+        });
+      }
+
+      if(st.evidenceText){
+        const tKey = st.evidenceText.key;
+        const block = document.createElement("div");
+        block.innerHTML = `
+          <label for="${tKey}" style="margin-top:14px">${escapeHtml(st.evidenceText.label)}</label>
+          <textarea id="${tKey}" placeholder="${escapeHtml(st.evidenceText.placeholder || "")}">${escapeHtml(state[tKey] || "")}</textarea>
+          <div class="muted" style="font-size:12px; margin-top:8px">
+            예: 링크(구글스칼라/프로젝트/깃허브), 대표 산출물, 외부 평가, 정책/시장 자료 등
+          </div>
+        `;
+        content.appendChild(block);
+
+        const el = block.querySelector("#" + tKey);
+        el.addEventListener("input", () => {
+          state[tKey] = el.value;
+          saveState();
+          updateBottlenecks();
+        });
+      }
+
+      if(st.final){
+        content.innerHTML = `
+          <div class="mini ok" style="margin-top:14px">
+            <strong>완료 준비</strong>
+            <div class="muted" style="margin-top:6px">
+              아래 버튼을 누르면, 지금까지의 입력을 바탕으로 <strong>요약 리포트</strong>가 생성됩니다.
+              리포트는 상담 요청 이메일/CRM 전송에 바로 사용할 수 있습니다.
+            </div>
+          </div>
+          <div class="actions" style="margin-top:14px; justify-content:flex-start;">
+            <button class="btn primary" id="btnBuild" type="button">✅ 요약 리포트 생성</button>
+          </div>
+          <div class="mini warn" style="margin-top:12px">
+            <strong>주의</strong>
+            <div class="muted" style="margin-top:6px">
+              이 리포트는 합격/불합격이 아닙니다. “현재 자료의 정렬 상태”와 “병목 지점”만을 요약합니다.
+            </div>
+          </div>
+        `;
+        content.querySelector("#btnBuild").addEventListener("click", () => {
+          showResult();
+        });
+      }
+
+      // buttons
+      $("#btnPrev").disabled = (stepIndex === 0);
+      $("#btnNext").textContent = (stepIndex === steps.length-1) ? "완료" : "다음 →";
+
+      updateBottlenecks();
+      saveState();
+    }
+
+    function updateBottlenecks(){
+      const all = [];
+      let totalPts = 0, totalMax = 0;
+
+      for(const st of steps){
+        if(!st.score) continue;
+        const {pts, max, bottlenecks} = st.score(state);
+        totalPts += (pts || 0);
+        totalMax += (max || 0);
+        if(bottlenecks && bottlenecks.length){
+          // only collect major bottlenecks (keep it concise)
+          for(const b of bottlenecks) all.push("• " + b);
+        }
+      }
+
+      const top = all.slice(0, 4);
+      $("#bottleneckText").textContent = top.length ? top.join("\n") : "현재까지 큰 병목이 감지되지 않았습니다. (추가 입력에 따라 변동될 수 있습니다.)";
+
+      // store hidden scores
+      state._score = { totalPts, totalMax };
+      saveState();
+    }
+
+    function showResult(){
+      updateBottlenecks();
+      const report = buildReport();
+      $("#reportBox").textContent = report;
+      $("#resultSection").classList.remove("hidden");
+      $("#resultSection").scrollIntoView({behavior:"smooth", block:"start"});
+    }
+
+    function buildReport(){
+      const s = state;
+      const score = s._score || {totalPts:0,totalMax:0};
+      const pct = score.totalMax ? Math.round((score.totalPts/score.totalMax)*100) : 0;
+
+      const bottlenecks = $("#bottleneckText").textContent || "";
+
+      const lines = [];
+      lines.push("NIW Evidence Mapping · Summary (Not a legal advice / Not a prediction)");
+      lines.push("==============================================================");
+      lines.push(`Name: ${s.name || "(blank)"}`);
+      lines.push(`Email: ${s.email || "(blank)"}`);
+      lines.push(`Field / Endeavor (1 sentence): ${s.field || "(blank)"}`);
+      lines.push("");
+      lines.push("A) Endeavor Continuity");
+      lines.push(`- Clarity: ${labelFrom("endeavor_clarity", s.endeavor_clarity)}`);
+      lines.push(`- Evidence (selected): ${(s.endeavor_evidence||[]).join(" / ") || "(none)"}`);
+      if(s.endeavor_links) lines.push(`- Links/Notes: ${s.endeavor_links}`);
+      lines.push("");
+      lines.push("B) National Importance Context");
+      lines.push(`- Impact level: ${labelFrom("importance_level", s.importance_level)}`);
+      lines.push(`- Evidence (selected): ${(s.importance_evidence||[]).join(" / ") || "(none)"}`);
+      if(s.importance_links) lines.push(`- Links/Notes: ${s.importance_links}`);
+      lines.push("");
+      lines.push("C) Well Positioned");
+      lines.push(`- Track record: ${labelFrom("track_record", s.track_record)}`);
+      lines.push(`- Evidence (selected): ${(s.positioned_evidence||[]).join(" / ") || "(none)"}`);
+      if(s.positioned_links) lines.push(`- Links/Notes: ${s.positioned_links}`);
+      lines.push("");
+      lines.push("D) Balancing Test (PERM waiver justification)");
+      lines.push(`- PERM-fit explanation: ${labelFrom("perm_fit", s.perm_fit)}`);
+      lines.push(`- Evidence (selected): ${(s.balancing_evidence||[]).join(" / ") || "(none)"}`);
+      if(s.balancing_links) lines.push(`- Links/Notes: ${s.balancing_links}`);
+      lines.push("");
+      lines.push("Detected bottlenecks (auto):");
+      lines.push(bottlenecks ? bottlenecks : "(none)");
+      lines.push("");
+      lines.push("Internal scoring (hidden; readiness approximation):");
+      lines.push(`- Readiness index: ${pct}% (computed from evidence-backed inputs; NOT a prediction)`);
+      lines.push("");
+      lines.push("Next step suggestion:");
+      lines.push("- Re-define endeavor as a single continuous professional axis, then map each claim to 1:1 evidence.");
+      lines.push("- If you want a lawyer-led structuring review, submit CV / Scholar / project summary / representative outputs.");
+      return lines.join("\n");
+    }
+
+    function labelFrom(key, val){
+      const st = steps.find(x => x.radios && x.radios.key === key);
+      if(!st) return val ?? "(blank)";
+      const opt = st.radios.options.find(o => String(o.value)===String(val));
+      return opt ? opt.text : "(blank)";
+    }
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    // Controls
+    $("#btnPrev").addEventListener("click", () => {
+      if(stepIndex > 0){ stepIndex--; render(); }
+    });
+    $("#btnNext").addEventListener("click", () => {
+      if(stepIndex < steps.length-1){ stepIndex++; render(); }
+    });
+    $("#btnJumpStart").addEventListener("click", () => {
+      // jump to last unfinished-ish step: keep simple (current)
+      render();
+      document.querySelector("#tool").scrollIntoView({behavior:"smooth", block:"start"});
+    });
+    $("#btnReset").addEventListener("click", () => {
+      localStorage.removeItem(STORAGE_KEY);
+      state = {};
+      stepIndex = 0;
+      render();
+    });
+
+    $("#btnCopy").addEventListener("click", async () => {
+      try{
+        await navigator.clipboard.writeText($("#reportBox").textContent || "");
+        $("#btnCopy").textContent = "✅ 복사 완료";
+        setTimeout(()=>$("#btnCopy").textContent="📋 리포트 복사", 1300);
+      }catch(e){
+        alert("복사 권한이 없어 실패했습니다. 리포트를 직접 드래그하여 복사해 주세요.");
+      }
+    });
+
+    $("#btnPrint").addEventListener("click", () => window.print());
+
+    // init
+    render();
+  </script>
+</body>
+</html>
